@@ -2,7 +2,9 @@ const express = require('express')
 const {
     getReviews,
     getReview,
-    createReview 
+    createReview,
+    deleteReview,
+    updateReview
 } = require('../controllers/reviewController')
 
 // create instance of router
@@ -18,14 +20,10 @@ router.get('/:id', getReview)
 router.post('/', createReview)
 
 // route to delete a specific review
-router.delete('/:id', (req, res) => {
-    res.json({message: 'DELETE new review'})
-})
+router.delete('/:id', deleteReview)
 
 // route to update a specific review
-router.patch('/:id', (req, res) => {
-    res.json({message: 'UPDATE new review'})
-})
+router.patch('/:id', updateReview)
 
 // export router
 module.exports = router

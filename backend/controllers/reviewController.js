@@ -14,7 +14,7 @@ const getReview = async (req, res) => {
 
     // validate requested ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: 'Review does not exist' })
+        return res.status(404).json({ error: 'Review ID invalid' })
     }
 
     // find document with matching ID from database
@@ -40,12 +40,41 @@ const createReview = async (req, res) => {
 }
 
 // delete a specific review
+const deleteReview = async (req, res) => {
+    const { id } = req.params
+    if (mongoose.Types.ObjectId.isValid(id)) {
+        const review = await Review.findOneAndDelete({ _id: id })
+        if (review) {
+            res.status(200).json(review)
+        } else {
+            res.status(404).json({ error: 'Review does not exist' })
+        }
+    } else {
+        res.status(404).json({ error: 'Review ID invalid' })
+    }
+}
 
 // update a specific review
+const updateReview = async (req, res) => {
+    const { id } = req.params
+
+    if (mongoose.Types.ObjectId.isValid(id)) {
+        const review = await Review.findByIdAndUpdate(id, { $set: req.body})
+        if (review) {
+            res.status(200).json(review)
+        } else {
+            res.status(404).json({ error: 'Review does not exist' })
+        }
+    } else {
+        res.status(404).json({ error: 'Review ID invalid' })
+    }
+}
 
 // export all functions in an object
 module.exports = {
     getReviews,
     getReview,
-    createReview 
+    createReview,
+    deleteReview,
+    updateReview
 }
