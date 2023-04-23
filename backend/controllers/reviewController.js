@@ -27,16 +27,30 @@ const getReview = async (req, res) => {
 
 // post a new review
 const createReview = async (req, res) => {
-     // destructure from req object
-     const { title, rating, body } = req.body
+    // destructure from req object
+    const { title, rating, body } = req.body
+
+    let emptyFields = []
+    if (!title) {
+        emptyFields.push('title')
+    }
+    if (!body) {
+        emptyFields.push('body')
+    }
+    if (!rating) {
+        emptyFields.push('rating')
+    }
+    if (emptyFields.length > 0) {
+        return res.status(400).json({ error: 'Please fill in all fields', emptyFields })
+    }
 
     // add document to database
-     try {
-         const review = await Review.create({ title, rating, body }) // await async function, of creating a review document from the model using the requested properties, to run
-         res.status(200).json(review) // send response with status code and json containing the review document
-     } catch (error) {
-         res.status(400).json({error: error.message}) // send response with status code and error message
-     }
+    try {
+        const review = await Review.create({ title, rating, body }) // await async function, of creating a review document from the model using the requested properties, to run
+        res.status(200).json(review) // send response with status code and json containing the review document
+    } catch (error) {
+        res.status(400).json({ error: error.message }) // send response with status code and error message
+    }
 }
 
 // delete a specific review
@@ -59,7 +73,7 @@ const updateReview = async (req, res) => {
     const { id } = req.params
 
     if (mongoose.Types.ObjectId.isValid(id)) {
-        const review = await Review.findByIdAndUpdate(id, { $set: req.body})
+        const review = await Review.findByIdAndUpdate(id, { $set: req.body })
         if (review) {
             res.status(200).json(review)
         } else {
